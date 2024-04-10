@@ -1,6 +1,6 @@
 for i in range(1, 10):
     if i == 7:
-        break  # Break out of the outer loop when reaching 7
+        break  
     print("Outer Loop:", i)
     j = 1
     while j <= 9:
