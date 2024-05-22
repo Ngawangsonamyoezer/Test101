@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -7,14 +8,14 @@ WHITE = (255, 255, 255)
 WIDTH, HEIGHT = 800, 600
 BALL_RADIUS = 10
 PADDLE_WIDTH = 100
-PADDLE_HEIGHT = 20  # Add the missing PADDLE_HEIGHT
+PADDLE_HEIGHT = 20
 
 class Ball:
     def __init__(self):
         self.x = WIDTH // 2
         self.y = HEIGHT // 2
         self.speed_x = random.choice([-3, 3])
-        self.speed_y = 2  # Add the missing speed_y attribute
+        self.speed_y = 2
 
     def move(self):
         self.x += self.speed_x
@@ -46,8 +47,6 @@ class Game:
         self.score = 0
         self.font = pygame.font.Font(None, 36)
         self.game_over = False
-        self.timer = 60  # Countdown timer in seconds
-        self.start_ticks = pygame.time.get_ticks()
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -65,22 +64,12 @@ class Game:
             else:
                 self.game_over = True
 
-        # Update timer
-        seconds = (pygame.time.get_ticks() - self.start_ticks) // 1000
-        self.timer = max(0, 60 - seconds)
-
-        # Check if time is up
-        if self.timer == 0:
-            self.game_over = True
-
     def draw(self, screen):
         screen.fill(BLACK)
         pygame.draw.circle(screen, WHITE, (self.ball.x, self.ball.y), BALL_RADIUS)
         pygame.draw.rect(screen, WHITE, (self.paddle.x, self.paddle.y, self.paddle.width, self.paddle.height))
         score_text = self.font.render(f"Score: {self.score}", True, WHITE)
         screen.blit(score_text, (10, 10))
-        timer_text = self.font.render(f"Time: {self.timer}", True, WHITE)
-        screen.blit(timer_text, (WIDTH - timer_text.get_width() - 10, 10))
         if self.game_over:
             game_over_text = self.font.render(f"Your score: {self.score}", True, WHITE)
             game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
@@ -91,6 +80,17 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Ping Pong")
     clock = pygame.time.Clock()
+
+    # Countdown timer before game starts
+    font = pygame.font.Font(None, 72)
+    for i in range(3, 0, -1):
+        screen.fill(BLACK)
+        countdown_text = font.render(str(i), True, WHITE)
+        countdown_rect = countdown_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(countdown_text, countdown_rect)
+        pygame.display.flip()
+        time.sleep(1)
+
     game = Game()
     while not game.game_over:
         game.handle_events()
